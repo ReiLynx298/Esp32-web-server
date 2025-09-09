@@ -2,17 +2,14 @@
 SD Card web server dengan file manager sederhana
 # PINOUT SERVER (REFERENSI PIN)
 
-| **Label**    | **GPIO Pin** | **Deskripsi**                        |
-|--------------|--------------|--------------------------------------|
-
-| `PIN_CLK`    | GPIO4        | CLK SD Card                          |
-| `PIN_MISO`   | GPIO5        | MISO SD Card                         |
-| `PIN_MOSI`   | GPIO6        | MOSI SD Card                         |
-| `PIN_CS_CARD`| GPIO7        | CS SD Card                           |
-| `led`        | GPIO8        | LED indikator(card mount failed = ON)|
-
+| **Label**    | **GPIO Pin** | **Deskripsi**|
+|--------------|--------------|--------------|
+| `PIN_CLK`    | GPIO4        | CLK SD Card  |
+| `PIN_MISO`   | GPIO5        | MISO SD Card |
+| `PIN_MOSI`   | GPIO6        | MOSI SD Card |
+| `PIN_CS_CARD`| GPIO7        | CS SD Card   |
+| `led`        | GPIO8        | LED indikator|
 ---
-
 ### PENTING GA PENTING
 lampu hidup pas kartu sd ga kebaca
 ```cpp
