@@ -12,10 +12,10 @@
 //) =========================================================================
 // SPI Pins & Constants
 //( =========================================================================
-#define PIN_CLK 22
-#define PIN_MISO 35
-#define PIN_MOSI 18
-#define PIN_CS_CARD 5
+#define PIN_CLK 4
+#define PIN_MISO 5
+#define PIN_MOSI 6
+#define PIN_CS_CARD 7
 #define led 8
 #define MAX_FILES_LIST 1000 // Batas maksimal file yang ditampilkan untuk menghindari kehabisan memori
 
@@ -667,10 +667,10 @@ void setup() {
     pinMode(led, OUTPUT);
     digitalWrite(led, LOW);
     // Inisialisasi SPI untuk SD Card
-    //SPI.begin(PIN_CLK, PIN_MISO, PIN_MOSI, PIN_CS_CARD);
+    SPI.begin(PIN_CLK, PIN_MISO, PIN_MOSI, PIN_CS_CARD);
     // Inisialisasi SD Card
-    //if (!SD.begin(PIN_CS_CARD)) {
-    if (!SD.begin()) {
+    if (!SD.begin(PIN_CS_CARD)) {
+    //if (!SD.begin()) {
         digitalWrite(led, HIGH);
         wifiConnect("ESP_Server","");
     } else {
