@@ -9,10 +9,6 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
-#include <ESPmDNS.h>
-#include <WiFiUdp.h>
-#include <ArduinoOTA.h>
-
 //) =========================================================================
 // SPI Pins & Constants
 //( =========================================================================
@@ -20,7 +16,7 @@
 #define PIN_MISO 35
 #define PIN_MOSI 18
 #define PIN_CS_CARD 5
-#define led 2
+#define led 8
 #define MAX_FILES_LIST 1000 // Batas maksimal file yang ditampilkan untuk menghindari kehabisan memori
 
 //) =========================================================================
@@ -373,42 +369,6 @@ const char index_html[] PROGMEM = R"rawliteral(
 //) =========================================================================
 // Utility Functions
 //( =========================================================================
-void otaUpdate() {
-    // Port defaults to 3232
-    ArduinoOTA.setPort(30);
-    // Hostname defaults to esp3232-[MAC]
-    ArduinoOTA.setHostname("ESP_Update");
-    // No authentication by default
-    // ArduinoOTA.setPassword("admin");
-    // Password can be set with it's md5 value as well
-    // MD5(admin) = 21232f297a57a5a743894a0e4a801fc3
-    // ArduinoOTA.setPasswordHash("21232f297a57a5a743894a0e4a801fc3");
-    ArduinoOTA
-    .onStart([]() {
-        String type;
-        if (ArduinoOTA.getCommand() == U_FLASH)
-        type = "sketch";
-        else // U_SPIFFS
-        type = "filesystem";
-        Serial.println("Start updating " + type);
-    })
-    .onEnd([]() {
-        Serial.println("\nEnd");
-    })
-    .onProgress([](unsigned int progress, unsigned int total) {
-        Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-    })
-    .onError([](ota_error_t error) {
-        Serial.printf("Error[%u]: ", error);
-        if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
-        else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
-        else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
-        else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
-        else if (error == OTA_END_ERROR) Serial.println("End Failed");
-    });
-    ArduinoOTA.begin();
-    // loop -> ArduinoOTA.handle(); no delay!
-}
 /**
 * @brief mengecek apakah kartu terpasang
 * @return True jika ya, False jika tidak
@@ -707,9 +667,10 @@ void setup() {
     pinMode(led, OUTPUT);
     digitalWrite(led, LOW);
     // Inisialisasi SPI untuk SD Card
-    SPI.begin(PIN_CLK, PIN_MISO, PIN_MOSI, PIN_CS_CARD);
+    //SPI.begin(PIN_CLK, PIN_MISO, PIN_MOSI, PIN_CS_CARD);
     // Inisialisasi SD Card
-    if (!SD.begin(PIN_CS_CARD)) {
+    //if (!SD.begin(PIN_CS_CARD)) {
+    if (!SD.begin()) {
         digitalWrite(led, HIGH);
         wifiConnect("ESP_Server","");
     } else {
@@ -732,7 +693,57 @@ void setup() {
             request->send_P(200, "text/html", index_html);
         }
     });
-
+server.on("/bookmark", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SD, "/bookmark.html", "text/html");
+    });
+    server.on("/history", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SD, "/history.html", "text/html");
+    });
+    server.on("/settings", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SD, "/settings.html", "text/html");
+    });
+    server.on("/chapter-list", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SD, "/chapter-list.html", "text/html");
+    });
+    server.on("/text-list", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SD, "/text-list.html", "text/html");
+    });
+    server.on("/img-list", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SD, "/image-list.html", "text/html");
+    });
+    server.on("/novel", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SD, "/novel.html", "text/html");
+    });
+    server.on("/komik", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SD, "/komik.html", "text/html");
+    });
+    server.on("/a", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SD, "/a.html", "text/html");
+    });
+    server.on("/b", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SD, "/b.html", "text/html");
+    });
+    server.on("/c", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SD, "/c.html", "text/html");
+    });
+    server.on("/d", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SD, "/d.html", "text/html");
+    });
+    server.on("/e", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SD, "/e.html", "text/html");
+    });
+    server.on("/f", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SD, "/f.html", "text/html");
+    });
+    server.on("/g", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SD, "/g.html", "text/html");
+    });
+    
+    
+    
+    server.on("/wifi-manager", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SD, "/wifi-manager.html", "text/html");
+    });
     // Rute untuk manajer file
     server.on("/file-manager", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(SD, "/file-manager.html", "text/html");
@@ -756,13 +767,10 @@ void setup() {
         request->send(404, "text/plain", "Halaman tidak ditemukan.");
         }
     });
-    otaUpdate();
     server.begin();
     Serial.println("Server HTTP dimulai.");
 }
 
-void loop() {
-    ArduinoOTA.handle();
-}
+void loop() {}
 
 //) =========================================================================}
